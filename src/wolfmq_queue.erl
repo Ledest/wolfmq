@@ -22,9 +22,7 @@ enqueue(QueueId, Item) ->
 
 dequeue(QueueId) ->
     Key  = ets:first(QueueId),
-    Item = ets:lookup(QueueId, Key),
-    true = ets:delete(QueueId, Key),
-    Item.
+    ets:take(QueueId, Key).
 
 map(QueueId, Predicate) ->
     map(QueueId, Predicate, ets:first(QueueId)).
@@ -38,8 +36,9 @@ map(QueueId, Predicate, Key) ->
                 ok      -> ets:delete(QueueId, Key);
                 keep    -> ok
             end;
-        _ ->
-            ets:delete(QueueId, Key)
+        [_] ->
+            ets:delete(QueueId, Key);
+        _ -> ok
     end,
     map(QueueId, Predicate, ets:first(QueueId)).
 
