@@ -24,12 +24,12 @@ delete(ExternalQueueId) ->
     ok.
 
 is_existing(ExternalQueueId) ->
-    case ets:lookup(?MODULE, ExternalQueueId) of
-        [] ->
-            false;
-        [{_, Meta}] ->
-            WorkerPid = maps:get(worker_pid, Meta),
+    try get_meta(ExternalQueueId) of
+        #{worker_pid := WorkerPid} ->
             is_process_alive(WorkerPid)
+    catch
+        error:badarg -> false;
+        C:R -> erlang:C(R)
     end.
 
 get_meta(ExternalQueueId) ->
