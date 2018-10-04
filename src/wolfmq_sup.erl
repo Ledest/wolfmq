@@ -17,9 +17,7 @@ start_group(GroupId) ->
         id          => GroupId,
         start       => {wolfmq_workers_sup, start_link, [GroupId]},
         restart     => transient,
-        shutdown    => infinity,
-        type        => supervisor,
-        modules     => [wolfmq_workers_sup]
+        type        => supervisor
     },
     supervisor:start_child(?MODULE, WorkersSup).
 
@@ -29,8 +27,6 @@ init([]) ->
         id          => wolfmq_mgr,
         start       => {wolfmq_mgr, start_link, []},
         restart     => permanent,
-        shutdown    => 1000,
-        type        => worker,
-        modules     => [wolfmq_mgr]
+        shutdown    => 1000
     },
     {ok, {{one_for_one, 100, 1}, [QueueMgr]}}.
