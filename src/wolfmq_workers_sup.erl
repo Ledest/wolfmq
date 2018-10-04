@@ -21,8 +21,6 @@ init([]) ->
         id          => wolfmq_worker,
         start       => {wolfmq_worker, start_link, []},
         restart     => transient,
-        shutdown    => brutal_kill,
-        type        => worker,
-        modules     => [wolfmq_worker]
+        shutdown    => brutal_kill
     },
     {ok, {{simple_one_for_one, 250, 5}, [Worker]}}.
