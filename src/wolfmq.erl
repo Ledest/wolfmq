@@ -28,8 +28,7 @@ push(QueueId, Msg, Opts) ->
 size({GroupId, _QId} = QueueId) when is_atom(GroupId) ->
     case wolfmq_queues_catalog:is_existing(QueueId) of
         true ->
-            Meta = wolfmq_queues_catalog:get_meta(QueueId),
-            InternalQueueId = maps:get(internal_id, Meta),
+            #{internal_id := InternalQueueId} = wolfmq_queues_catalog:get_meta(QueueId),
             wolfmq_queue:size(InternalQueueId);
         false ->
             0
@@ -42,8 +41,7 @@ add_to_queue(ExternalQueueId, Msgs) when is_list(Msgs) ->
     _ = [add_to_queue(ExternalQueueId, Msg) || Msg <- Msgs],
     ok;
 add_to_queue(ExternalQueueId, Msg) ->
-    Meta            = wolfmq_queues_catalog:get_meta(ExternalQueueId),
-    InternalQueueId = maps:get(internal_id, Meta),
+    Meta = #{internal_id := InternalQueueId} = wolfmq_queues_catalog:get_meta(ExternalQueueId),
     MsgNumber       = wolfmq_sequences:next(ExternalQueueId),
     IsEmpty         = wolfmq_queue:is_empty(InternalQueueId),
     true            = wolfmq_queue:enqueue(InternalQueueId, {MsgNumber, Msg}),
