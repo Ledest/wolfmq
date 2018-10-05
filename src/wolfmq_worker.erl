@@ -107,7 +107,6 @@ start_idle_timer(undefined, Timeout) ->
 start_idle_timer(OldTimer, _Timeout) ->
     OldTimer.
 
-cancel_idle_timer(undefined) ->
-    {ok, cancel};
 cancel_idle_timer(TimerRef) ->
-    erlang:cancel_timer(TimerRef).
+    TimerRef =:= undefined orelse erlang:cancel_timer(TimerRef),
+    {ok, cancel}.
